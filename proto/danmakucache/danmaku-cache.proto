@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package danmakucache;
+
+option go_package = "./;danmakucache";
+
+import "common/danmaku.proto";
+
+service DanmakuCache {
+	rpc GetDanmakuListByChannel(CallRequest) returns (CallResponse) {};
+}
+
+message CallRequest {
+        uint64 ChannelID = 2;
+}
+
+message CallResponse {
+        repeated common.Danmaku DanmakuList = 1;
+}

@@ -8,12 +8,14 @@ init:
 
 .PHONY: proto
 proto:
-	@protoc --proto_path=./proto/kafkaproducer/ --micro_out=./proto/kafkaproducer/ --go_out=:./proto/kafkaproducer/ ./proto/kafkaproducer/kafka-producer.proto
-	@protoc --proto_path=./proto/kafkaconsumer/ --micro_out=./proto/kafkaconsumer/ --go_out=:./proto/kafkaconsumer/ ./proto/kafkaconsumer/kafka-consumer.proto
+	@protoc --proto_path=. --micro_out=./proto/kafkaproducer/ --go_out=./proto/kafkaproducer/ ./proto/kafkaproducer/kafka-producer.proto
+	@protoc --proto_path=. --micro_out=./proto/kafkaconsumer/ --go_out=:./proto/kafkaconsumer/ ./proto/kafkaconsumer/kafka-consumer.proto
+	@protoc --proto_path=. --micro_out=./proto/danmakucache/ --go_out=:./proto/danmakucache/ -I=./proto ./proto/danmakucache/danmaku-cache.proto
+	@protoc --proto_path=. --micro_out=paths=source_relative:./proto/common/ --go_out=paths=source_relative:./proto/common/ ./proto/common/danmaku.proto
 
 
 .PHONY: services
-services: api-gateway kafka-producer kafka-consumer
+services: api-gateway kafka-producer kafka-consumer danmaku-cache
 
 .PHONY: api-gateway
 api-gateway:
@@ -26,6 +28,10 @@ kafka-producer:
 .PHONY: kafka-consumer
 kafka-consumer:
 	@go build -o bin/kafka-consumer ./kafka-consumer/main.go
+
+.PHONY: danmaku-cache
+danmaku-cache:
+	@go build -o bin/danmaku-cache ./danmaku-cache/main.go
 
 .PHONY: tidy
 tidy:

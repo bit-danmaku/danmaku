@@ -4,24 +4,25 @@ import (
 	"context"
 	"strconv"
 
-	pb "github.com/bit-danmaku/danmaku/proto/kafkaconsumer"
+	danmaku_cache_pb "github.com/bit-danmaku/danmaku/proto/danmakucache"
 
 	httpServer "github.com/asim/go-micro/plugins/server/http/v3"
 	"github.com/asim/go-micro/v3"
+	"github.com/asim/go-micro/v3/client"
 	log "github.com/asim/go-micro/v3/logger"
 	"github.com/asim/go-micro/v3/registry"
 	"github.com/asim/go-micro/v3/server"
+	"github.com/bit-danmaku/danmaku/common"
 	"github.com/gin-gonic/gin"
 )
 
 var (
-	name    = "api-gateway"
 	version = "latest"
 )
 
 func main() {
 	httpSrv := httpServer.NewServer(
-		server.Name(name),
+		server.Name(common.API_GATEWAY),
 		server.Address(":8080"),
 	)
 
@@ -30,9 +31,6 @@ func main() {
 	router.Use(gin.Recovery())
 
 	// register router
-	demo := newDemo()
-	demo.InitRouter(router)
-
 	hd := httpSrv.NewHandler(router)
 	if err := httpSrv.Handle(hd); err != nil {
 		log.Fatal(err)
@@ -40,7 +38,7 @@ func main() {
 
 	// Create Service
 	service := micro.NewService(
-		micro.Name(name),
+		micro.Name(common.API_GATEWAY),
 		micro.Version(version),
 		micro.Server(httpSrv),
 		micro.Registry(registry.NewRegistry()),
@@ -48,14 +46,8 @@ func main() {
 
 	service.Init()
 
-	c := pb.NewKafkaConsumerService("kafka-consumer", service.Client())
-
-	ret, err := c.Call(context.Background(), &pb.CallRequest{Name: "John"})
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Info(ret)
+	demo := newDemo(service.Client())
+	demo.InitRouter(router)
 
 	// Run service
 	if err := service.Run(); err != nil {
@@ -65,6 +57,7 @@ func main() {
 
 //demoRouter
 type demoRouter struct {
+	danmakuCachePB danmaku_cache_pb.DanmakuCacheService
 }
 
 type danmaku struct {
@@ -78,8 +71,10 @@ type danmaku struct {
 // [float64, uint8, uint32, string, string]
 type danmakuResp = [5]interface{}
 
-func newDemo() *demoRouter {
-	return &demoRouter{}
+func newDemo(client client.Client) *demoRouter {
+	return &demoRouter{
+		danmakuCachePB: danmaku_cache_pb.NewDanmakuCacheService(common.DANMAKU_CACHE, client),
+	}
 }
 
 func (a *demoRouter) InitRouter(router *gin.Engine) {
@@ -93,7 +88,6 @@ func (a *demoRouter) PostDanmaku(c *gin.Context) {
 		c.JSON(501, gin.H{"code": 1, "msg": "Failed When Parse Channnel ID."})
 		return
 	}
-	strconv.Atoi(c.Param("id"))
 	var dmk danmaku
 
 	if err := c.ShouldBindJSON(&dmk); err == nil {
@@ -108,9 +102,18 @@ func (a *demoRouter) PostDanmaku(c *gin.Context) {
 }
 
 func (a *demoRouter) GetDanmakuList(c *gin.Context) {
-	//channelID := c.Param("id")
+	channelID, err := strconv.ParseUint(c.Param("id"), 10, 0)
+	if err != nil {
+		c.JSON(501, gin.H{"code": 1, "msg": "Failed When Parse Channnel ID."})
+		return
+	}
 
-	data := danmakuResp{1, 2, 3, "author", "hello world"}
+	ret, err := a.danmakuCachePB.GetDanmakuListByChannel(context.Background(), &danmaku_cache_pb.CallRequest{ChannelID: channelID})
 
-	c.JSON(200, gin.H{"data": []danmakuResp{data, data}, "code": 0})
+	if err != nil {
+		c.JSON(501, gin.H{"code": 2, "msg": "Failed When Get Post Data."})
+		return
+	}
+
+	c.JSON(200, gin.H{"data": ret.DanmakuList, "code": 0})
 }
