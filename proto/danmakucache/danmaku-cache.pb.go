@@ -21,16 +21,16 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type CallRequest struct {
+type GetRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ChannelID uint64 `protobuf:"varint,2,opt,name=ChannelID,proto3" json:"ChannelID,omitempty"`
+	ChannelID uint64 `protobuf:"varint,1,opt,name=ChannelID,proto3" json:"ChannelID,omitempty"`
 }
 
-func (x *CallRequest) Reset() {
-	*x = CallRequest{}
+func (x *GetRequest) Reset() {
+	*x = GetRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_proto_danmakucache_danmaku_cache_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -38,13 +38,13 @@ func (x *CallRequest) Reset() {
 	}
 }
 
-func (x *CallRequest) String() string {
+func (x *GetRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CallRequest) ProtoMessage() {}
+func (*GetRequest) ProtoMessage() {}
 
-func (x *CallRequest) ProtoReflect() protoreflect.Message {
+func (x *GetRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_danmakucache_danmaku_cache_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -56,19 +56,19 @@ func (x *CallRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CallRequest.ProtoReflect.Descriptor instead.
-func (*CallRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetRequest.ProtoReflect.Descriptor instead.
+func (*GetRequest) Descriptor() ([]byte, []int) {
 	return file_proto_danmakucache_danmaku_cache_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CallRequest) GetChannelID() uint64 {
+func (x *GetRequest) GetChannelID() uint64 {
 	if x != nil {
 		return x.ChannelID
 	}
 	return 0
 }
 
-type CallResponse struct {
+type GetResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -76,8 +76,8 @@ type CallResponse struct {
 	DanmakuList []*common.Danmaku `protobuf:"bytes,1,rep,name=DanmakuList,proto3" json:"DanmakuList,omitempty"`
 }
 
-func (x *CallResponse) Reset() {
-	*x = CallResponse{}
+func (x *GetResponse) Reset() {
+	*x = GetResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_proto_danmakucache_danmaku_cache_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -85,13 +85,13 @@ func (x *CallResponse) Reset() {
 	}
 }
 
-func (x *CallResponse) String() string {
+func (x *GetResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CallResponse) ProtoMessage() {}
+func (*GetResponse) ProtoMessage() {}
 
-func (x *CallResponse) ProtoReflect() protoreflect.Message {
+func (x *GetResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_danmakucache_danmaku_cache_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -103,16 +103,126 @@ func (x *CallResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CallResponse.ProtoReflect.Descriptor instead.
-func (*CallResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetResponse.ProtoReflect.Descriptor instead.
+func (*GetResponse) Descriptor() ([]byte, []int) {
 	return file_proto_danmakucache_danmaku_cache_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CallResponse) GetDanmakuList() []*common.Danmaku {
+func (x *GetResponse) GetDanmakuList() []*common.Danmaku {
 	if x != nil {
 		return x.DanmakuList
 	}
 	return nil
+}
+
+type PostRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ChannelID uint64          `protobuf:"varint,1,opt,name=ChannelID,proto3" json:"ChannelID,omitempty"`
+	Danmaku   *common.Danmaku `protobuf:"bytes,2,opt,name=Danmaku,proto3" json:"Danmaku,omitempty"`
+}
+
+func (x *PostRequest) Reset() {
+	*x = PostRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_danmakucache_danmaku_cache_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PostRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PostRequest) ProtoMessage() {}
+
+func (x *PostRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_danmakucache_danmaku_cache_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PostRequest.ProtoReflect.Descriptor instead.
+func (*PostRequest) Descriptor() ([]byte, []int) {
+	return file_proto_danmakucache_danmaku_cache_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *PostRequest) GetChannelID() uint64 {
+	if x != nil {
+		return x.ChannelID
+	}
+	return 0
+}
+
+func (x *PostRequest) GetDanmaku() *common.Danmaku {
+	if x != nil {
+		return x.Danmaku
+	}
+	return nil
+}
+
+type PostResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Code uint64 `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Msg  string `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+}
+
+func (x *PostResponse) Reset() {
+	*x = PostResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_proto_danmakucache_danmaku_cache_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PostResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PostResponse) ProtoMessage() {}
+
+func (x *PostResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_danmakucache_danmaku_cache_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PostResponse.ProtoReflect.Descriptor instead.
+func (*PostResponse) Descriptor() ([]byte, []int) {
+	return file_proto_danmakucache_danmaku_cache_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *PostResponse) GetCode() uint64 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *PostResponse) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
 }
 
 var File_proto_danmakucache_danmaku_cache_proto protoreflect.FileDescriptor
@@ -122,22 +232,35 @@ var file_proto_danmakucache_danmaku_cache_proto_rawDesc = []byte{
 	0x61, 0x63, 0x68, 0x65, 0x2f, 0x64, 0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75, 0x2d, 0x63, 0x61, 0x63,
 	0x68, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0c, 0x64, 0x61, 0x6e, 0x6d, 0x61, 0x6b,
 	0x75, 0x63, 0x61, 0x63, 0x68, 0x65, 0x1a, 0x14, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2f, 0x64,
-	0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x2b, 0x0a, 0x0b,
-	0x43, 0x61, 0x6c, 0x6c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1c, 0x0a, 0x09, 0x43,
-	0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x49, 0x44, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04, 0x52, 0x09,
-	0x43, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x49, 0x44, 0x22, 0x41, 0x0a, 0x0c, 0x43, 0x61, 0x6c,
-	0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x31, 0x0a, 0x0b, 0x44, 0x61, 0x6e,
-	0x6d, 0x61, 0x6b, 0x75, 0x4c, 0x69, 0x73, 0x74, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0f,
-	0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x44, 0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75, 0x52,
-	0x0b, 0x44, 0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75, 0x4c, 0x69, 0x73, 0x74, 0x32, 0x62, 0x0a, 0x0c,
-	0x44, 0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75, 0x43, 0x61, 0x63, 0x68, 0x65, 0x12, 0x52, 0x0a, 0x17,
-	0x47, 0x65, 0x74, 0x44, 0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75, 0x4c, 0x69, 0x73, 0x74, 0x42, 0x79,
-	0x43, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x12, 0x19, 0x2e, 0x64, 0x61, 0x6e, 0x6d, 0x61, 0x6b,
-	0x75, 0x63, 0x61, 0x63, 0x68, 0x65, 0x2e, 0x43, 0x61, 0x6c, 0x6c, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x64, 0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75, 0x63, 0x61, 0x63, 0x68,
-	0x65, 0x2e, 0x43, 0x61, 0x6c, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00,
-	0x42, 0x11, 0x5a, 0x0f, 0x2e, 0x2f, 0x3b, 0x64, 0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75, 0x63, 0x61,
-	0x63, 0x68, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x2a, 0x0a, 0x0a,
+	0x47, 0x65, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1c, 0x0a, 0x09, 0x43, 0x68,
+	0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x09, 0x43,
+	0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x49, 0x44, 0x22, 0x40, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x31, 0x0a, 0x0b, 0x44, 0x61, 0x6e, 0x6d, 0x61,
+	0x6b, 0x75, 0x4c, 0x69, 0x73, 0x74, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x63,
+	0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x44, 0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75, 0x52, 0x0b, 0x44,
+	0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75, 0x4c, 0x69, 0x73, 0x74, 0x22, 0x56, 0x0a, 0x0b, 0x50, 0x6f,
+	0x73, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1c, 0x0a, 0x09, 0x43, 0x68, 0x61,
+	0x6e, 0x6e, 0x65, 0x6c, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x09, 0x43, 0x68,
+	0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x49, 0x44, 0x12, 0x29, 0x0a, 0x07, 0x44, 0x61, 0x6e, 0x6d, 0x61,
+	0x6b, 0x75, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f,
+	0x6e, 0x2e, 0x44, 0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75, 0x52, 0x07, 0x44, 0x61, 0x6e, 0x6d, 0x61,
+	0x6b, 0x75, 0x22, 0x34, 0x0a, 0x0c, 0x50, 0x6f, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04,
+	0x52, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x6d, 0x73, 0x67, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x03, 0x6d, 0x73, 0x67, 0x32, 0xa8, 0x01, 0x0a, 0x0c, 0x44, 0x61, 0x6e,
+	0x6d, 0x61, 0x6b, 0x75, 0x43, 0x61, 0x63, 0x68, 0x65, 0x12, 0x46, 0x0a, 0x0b, 0x50, 0x6f, 0x73,
+	0x74, 0x44, 0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75, 0x12, 0x19, 0x2e, 0x64, 0x61, 0x6e, 0x6d, 0x61,
+	0x6b, 0x75, 0x63, 0x61, 0x63, 0x68, 0x65, 0x2e, 0x50, 0x6f, 0x73, 0x74, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x64, 0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75, 0x63, 0x61, 0x63,
+	0x68, 0x65, 0x2e, 0x50, 0x6f, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x00, 0x12, 0x50, 0x0a, 0x17, 0x47, 0x65, 0x74, 0x44, 0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75, 0x4c,
+	0x69, 0x73, 0x74, 0x42, 0x79, 0x43, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x12, 0x18, 0x2e, 0x64,
+	0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75, 0x63, 0x61, 0x63, 0x68, 0x65, 0x2e, 0x47, 0x65, 0x74, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x64, 0x61, 0x6e, 0x6d, 0x61, 0x6b, 0x75,
+	0x63, 0x61, 0x63, 0x68, 0x65, 0x2e, 0x47, 0x65, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x22, 0x00, 0x42, 0x11, 0x5a, 0x0f, 0x2e, 0x2f, 0x3b, 0x64, 0x61, 0x6e, 0x6d, 0x61, 0x6b,
+	0x75, 0x63, 0x61, 0x63, 0x68, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -152,21 +275,26 @@ func file_proto_danmakucache_danmaku_cache_proto_rawDescGZIP() []byte {
 	return file_proto_danmakucache_danmaku_cache_proto_rawDescData
 }
 
-var file_proto_danmakucache_danmaku_cache_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_proto_danmakucache_danmaku_cache_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_proto_danmakucache_danmaku_cache_proto_goTypes = []interface{}{
-	(*CallRequest)(nil),    // 0: danmakucache.CallRequest
-	(*CallResponse)(nil),   // 1: danmakucache.CallResponse
-	(*common.Danmaku)(nil), // 2: common.Danmaku
+	(*GetRequest)(nil),     // 0: danmakucache.GetRequest
+	(*GetResponse)(nil),    // 1: danmakucache.GetResponse
+	(*PostRequest)(nil),    // 2: danmakucache.PostRequest
+	(*PostResponse)(nil),   // 3: danmakucache.PostResponse
+	(*common.Danmaku)(nil), // 4: common.Danmaku
 }
 var file_proto_danmakucache_danmaku_cache_proto_depIdxs = []int32{
-	2, // 0: danmakucache.CallResponse.DanmakuList:type_name -> common.Danmaku
-	0, // 1: danmakucache.DanmakuCache.GetDanmakuListByChannel:input_type -> danmakucache.CallRequest
-	1, // 2: danmakucache.DanmakuCache.GetDanmakuListByChannel:output_type -> danmakucache.CallResponse
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	4, // 0: danmakucache.GetResponse.DanmakuList:type_name -> common.Danmaku
+	4, // 1: danmakucache.PostRequest.Danmaku:type_name -> common.Danmaku
+	2, // 2: danmakucache.DanmakuCache.PostDanmaku:input_type -> danmakucache.PostRequest
+	0, // 3: danmakucache.DanmakuCache.GetDanmakuListByChannel:input_type -> danmakucache.GetRequest
+	3, // 4: danmakucache.DanmakuCache.PostDanmaku:output_type -> danmakucache.PostResponse
+	1, // 5: danmakucache.DanmakuCache.GetDanmakuListByChannel:output_type -> danmakucache.GetResponse
+	4, // [4:6] is the sub-list for method output_type
+	2, // [2:4] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_proto_danmakucache_danmaku_cache_proto_init() }
@@ -176,7 +304,7 @@ func file_proto_danmakucache_danmaku_cache_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_proto_danmakucache_danmaku_cache_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CallRequest); i {
+			switch v := v.(*GetRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -188,7 +316,31 @@ func file_proto_danmakucache_danmaku_cache_proto_init() {
 			}
 		}
 		file_proto_danmakucache_danmaku_cache_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CallResponse); i {
+			switch v := v.(*GetResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_danmakucache_danmaku_cache_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PostRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_proto_danmakucache_danmaku_cache_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PostResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -206,7 +358,7 @@ func file_proto_danmakucache_danmaku_cache_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_proto_danmakucache_danmaku_cache_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

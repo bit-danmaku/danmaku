@@ -37,7 +37,8 @@ func NewDanmakuCacheEndpoints() []*api.Endpoint {
 // Client API for DanmakuCache service
 
 type DanmakuCacheService interface {
-	GetDanmakuListByChannel(ctx context.Context, in *CallRequest, opts ...client.CallOption) (*CallResponse, error)
+	PostDanmaku(ctx context.Context, in *PostRequest, opts ...client.CallOption) (*PostResponse, error)
+	GetDanmakuListByChannel(ctx context.Context, in *GetRequest, opts ...client.CallOption) (*GetResponse, error)
 }
 
 type danmakuCacheService struct {
@@ -52,9 +53,19 @@ func NewDanmakuCacheService(name string, c client.Client) DanmakuCacheService {
 	}
 }
 
-func (c *danmakuCacheService) GetDanmakuListByChannel(ctx context.Context, in *CallRequest, opts ...client.CallOption) (*CallResponse, error) {
+func (c *danmakuCacheService) PostDanmaku(ctx context.Context, in *PostRequest, opts ...client.CallOption) (*PostResponse, error) {
+	req := c.c.NewRequest(c.name, "DanmakuCache.PostDanmaku", in)
+	out := new(PostResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *danmakuCacheService) GetDanmakuListByChannel(ctx context.Context, in *GetRequest, opts ...client.CallOption) (*GetResponse, error) {
 	req := c.c.NewRequest(c.name, "DanmakuCache.GetDanmakuListByChannel", in)
-	out := new(CallResponse)
+	out := new(GetResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -65,12 +76,14 @@ func (c *danmakuCacheService) GetDanmakuListByChannel(ctx context.Context, in *C
 // Server API for DanmakuCache service
 
 type DanmakuCacheHandler interface {
-	GetDanmakuListByChannel(context.Context, *CallRequest, *CallResponse) error
+	PostDanmaku(context.Context, *PostRequest, *PostResponse) error
+	GetDanmakuListByChannel(context.Context, *GetRequest, *GetResponse) error
 }
 
 func RegisterDanmakuCacheHandler(s server.Server, hdlr DanmakuCacheHandler, opts ...server.HandlerOption) error {
 	type danmakuCache interface {
-		GetDanmakuListByChannel(ctx context.Context, in *CallRequest, out *CallResponse) error
+		PostDanmaku(ctx context.Context, in *PostRequest, out *PostResponse) error
+		GetDanmakuListByChannel(ctx context.Context, in *GetRequest, out *GetResponse) error
 	}
 	type DanmakuCache struct {
 		danmakuCache
@@ -83,6 +96,10 @@ type danmakuCacheHandler struct {
 	DanmakuCacheHandler
 }
 
-func (h *danmakuCacheHandler) GetDanmakuListByChannel(ctx context.Context, in *CallRequest, out *CallResponse) error {
+func (h *danmakuCacheHandler) PostDanmaku(ctx context.Context, in *PostRequest, out *PostResponse) error {
+	return h.DanmakuCacheHandler.PostDanmaku(ctx, in, out)
+}
+
+func (h *danmakuCacheHandler) GetDanmakuListByChannel(ctx context.Context, in *GetRequest, out *GetResponse) error {
 	return h.DanmakuCacheHandler.GetDanmakuListByChannel(ctx, in, out)
 }

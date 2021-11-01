@@ -11,7 +11,7 @@ proto:
 	@protoc --proto_path=. --micro_out=./proto/kafkaproducer/ --go_out=./proto/kafkaproducer/ ./proto/kafkaproducer/kafka-producer.proto
 	@protoc --proto_path=. --micro_out=./proto/kafkaconsumer/ --go_out=:./proto/kafkaconsumer/ ./proto/kafkaconsumer/kafka-consumer.proto
 	@protoc --proto_path=. --micro_out=./proto/danmakucache/ --go_out=:./proto/danmakucache/ -I=./proto ./proto/danmakucache/danmaku-cache.proto
-	@protoc --proto_path=. --micro_out=paths=source_relative:./proto/common/ --go_out=paths=source_relative:./proto/common/ ./proto/common/danmaku.proto
+	@protoc --proto_path=. --micro_out=paths=source_relative:. --go_out=paths=source_relative:. ./proto/common/danmaku.proto
 
 
 .PHONY: services

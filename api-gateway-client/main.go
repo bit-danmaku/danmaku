@@ -13,6 +13,7 @@ import (
 	"github.com/asim/go-micro/v3/registry"
 	"github.com/asim/go-micro/v3/server"
 	"github.com/bit-danmaku/danmaku/common"
+	commonProto "github.com/bit-danmaku/danmaku/proto/common"
 	"github.com/gin-gonic/gin"
 )
 
@@ -83,7 +84,7 @@ func (a *demoRouter) InitRouter(router *gin.Engine) {
 }
 
 func (a *demoRouter) PostDanmaku(c *gin.Context) {
-	_, err := strconv.ParseUint(c.Param("id"), 10, 0)
+	channelID, err := strconv.ParseUint(c.Param("id"), 10, 0)
 	if err != nil {
 		c.JSON(501, gin.H{"code": 1, "msg": "Failed When Parse Channnel ID."})
 		return
@@ -92,13 +93,20 @@ func (a *demoRouter) PostDanmaku(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&dmk); err == nil {
 		log.Infof("get body: %+v", dmk)
-		// TODO: call RPC client
+		// TODO: change service call to kafkaproducer.
+		ret, err := a.danmakuCachePB.PostDanmaku(context.Background(), &danmaku_cache_pb.PostRequest{Danmaku: &commonProto.Danmaku{Author: dmk.Author, Time: dmk.Time, Text: dmk.Text, Color: dmk.Color, Type: uint32(dmk.Type)}, ChannelID: channelID})
+
+		if err != nil {
+			c.JSON(501, gin.H{"code": 2, "msg": "Failed When Add Data to DB."})
+		}
+
+		c.JSON(200, gin.H{"code": ret.Code, "data": ret.Msg})
+		return
 	} else {
 		log.Error(err)
 		c.JSON(501, gin.H{"code": 2, "msg": "Failed When Get Post Data."})
 	}
 
-	c.JSON(200, gin.H{"code": 0, "data": dmk})
 }
 
 func (a *demoRouter) GetDanmakuList(c *gin.Context) {
@@ -108,7 +116,7 @@ func (a *demoRouter) GetDanmakuList(c *gin.Context) {
 		return
 	}
 
-	ret, err := a.danmakuCachePB.GetDanmakuListByChannel(context.Background(), &danmaku_cache_pb.CallRequest{ChannelID: channelID})
+	ret, err := a.danmakuCachePB.GetDanmakuListByChannel(context.Background(), &danmaku_cache_pb.GetRequest{ChannelID: channelID})
 
 	if err != nil {
 		c.JSON(501, gin.H{"code": 2, "msg": "Failed When Get Post Data."})

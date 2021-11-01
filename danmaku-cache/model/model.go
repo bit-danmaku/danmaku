@@ -3,6 +3,8 @@ package model
 import (
 	"context"
 	"time"
+
+	log "github.com/asim/go-micro/v3/logger"
 )
 
 type Danmaku struct {
@@ -12,7 +14,7 @@ type Danmaku struct {
 	Time      float64
 	Text      string
 	Color     uint32
-	Type      uint8 `default:"0"`
+	Type      uint8     `default:"0"`
 	CreatedAt time.Time `json:"-"`
 }
 
@@ -40,4 +42,19 @@ func (db *DBConnector) GetDanmakuListByChannel(ctx context.Context, channelID ui
 	}
 
 	return dmks
+}
+
+func (db *DBConnector) AddDanmaku(ctx context.Context, danmaku Danmaku) error {
+
+	// Add to database.
+	err := db.db.AddNewDanmaku(danmaku)
+
+	if err != nil {
+		log.Fatalf("cannot add danmaku to db, danmaku: %+v, db: %+v", danmaku, db)
+	}
+
+	// flush the cache by delete key.
+	db.cache.CleanChannel(ctx, danmaku.ChannelID)
+
+	return nil
 }

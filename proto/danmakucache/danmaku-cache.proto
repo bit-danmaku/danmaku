@@ -7,13 +7,24 @@ option go_package = "./;danmakucache";
 import "common/danmaku.proto";
 
 service DanmakuCache {
-	rpc GetDanmakuListByChannel(CallRequest) returns (CallResponse) {};
+        rpc PostDanmaku(PostRequest) returns (PostResponse) {};
+	rpc GetDanmakuListByChannel(GetRequest) returns (GetResponse) {};
 }
 
-message CallRequest {
-        uint64 ChannelID = 2;
+message GetRequest {
+        uint64 ChannelID = 1;
 }
 
-message CallResponse {
+message GetResponse {
         repeated common.Danmaku DanmakuList = 1;
+}
+
+message PostRequest {
+        uint64 ChannelID = 1;
+        common.Danmaku Danmaku = 2;
+}
+
+message PostResponse{
+        uint64 code = 1;
+        string msg = 2;
 }

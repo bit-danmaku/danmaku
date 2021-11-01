@@ -1,6 +1,7 @@
 package model
 
 import (
+	log "github.com/asim/go-micro/v3/logger"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -27,4 +28,14 @@ func (db *MariaDBClient) GetDanmakuListByChannel(channelID uint64) []Danmaku {
 	db.db.Where(&Danmaku{ChannelID: channelID}).Find(&danmakus)
 
 	return danmakus
+}
+
+func (db *MariaDBClient) AddNewDanmaku(danmaku Danmaku) error {
+	log.Infof("%+v", danmaku)
+	result := db.db.Create(&danmaku)
+	if result.Error != nil {
+		log.Fatal(result.Error)
+	}
+
+	return nil
 }
