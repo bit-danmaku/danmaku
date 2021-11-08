@@ -36,9 +36,11 @@ func (db *DBConnector) GetDanmakuListByChannel(ctx context.Context, channelID ui
 
 		dmks = db.db.GetDanmakuListByChannel(channelID)
 
-		// TODO: handle err.
 		// Update cache, then return.
-		db.cache.SetDanmakusByChannel(ctx, channelID, dmks)
+		err := db.cache.SetDanmakusByChannel(ctx, channelID, dmks)
+		if err != nil {
+			log.Error("cache set error: %+v", err)
+		}
 	}
 
 	return dmks
