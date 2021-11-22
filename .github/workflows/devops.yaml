@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        bin: [api-gateway, danmaku-dache]
+        bin: [api-gateway, danmaku-cache]
     steps:
       - 
         name: Login to DockerHub
