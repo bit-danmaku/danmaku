@@ -32,5 +32,5 @@ jobs:
           tags: fkynjyq/bit-danmaku_${{ matrix.bin }}:latest
           secrets: |
             GIT_AUTH_TOKEN=${{ secrets.MYTOKEN }}
-          build-args:
-            - BIN_NAME=${{ matrix.bin }}:latest
+          build-args: |
+            BIN_NAME=${{ matrix.bin }}
