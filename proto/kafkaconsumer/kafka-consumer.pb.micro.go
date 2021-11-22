@@ -36,8 +36,7 @@ func NewKafkaConsumerEndpoints() []*api.Endpoint {
 // Client API for KafkaConsumer service
 
 type KafkaConsumerService interface {
-	GetMessage(ctx context.Context, in *CallRequest, opts ...client.CallOption) (*CallResponse, error)
-	PostMessage(ctx context.Context, in *PostRequest, opts ...client.CallOption) (*CallResponse, error)
+	Call(ctx context.Context, in *CallRequest, opts ...client.CallOption) (*CallResponse, error)
 }
 
 type kafkaConsumerService struct {
@@ -52,18 +51,8 @@ func NewKafkaConsumerService(name string, c client.Client) KafkaConsumerService 
 	}
 }
 
-func (c *kafkaConsumerService) GetMessage(ctx context.Context, in *CallRequest, opts ...client.CallOption) (*CallResponse, error) {
-	req := c.c.NewRequest(c.name, "KafkaConsumer.GetMessage", in)
-	out := new(CallResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *kafkaConsumerService) PostMessage(ctx context.Context, in *PostRequest, opts ...client.CallOption) (*CallResponse, error) {
-	req := c.c.NewRequest(c.name, "KafkaConsumer.PostMessage", in)
+func (c *kafkaConsumerService) Call(ctx context.Context, in *CallRequest, opts ...client.CallOption) (*CallResponse, error) {
+	req := c.c.NewRequest(c.name, "KafkaConsumer.Call", in)
 	out := new(CallResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -75,14 +64,12 @@ func (c *kafkaConsumerService) PostMessage(ctx context.Context, in *PostRequest,
 // Server API for KafkaConsumer service
 
 type KafkaConsumerHandler interface {
-	GetMessage(context.Context, *CallRequest, *CallResponse) error
-	PostMessage(context.Context, *PostRequest, *CallResponse) error
+	Call(context.Context, *CallRequest, *CallResponse) error
 }
 
 func RegisterKafkaConsumerHandler(s server.Server, hdlr KafkaConsumerHandler, opts ...server.HandlerOption) error {
 	type kafkaConsumer interface {
-		GetMessage(ctx context.Context, in *CallRequest, out *CallResponse) error
-		PostMessage(ctx context.Context, in *PostRequest, out *CallResponse) error
+		Call(ctx context.Context, in *CallRequest, out *CallResponse) error
 	}
 	type KafkaConsumer struct {
 		kafkaConsumer
@@ -95,10 +82,6 @@ type kafkaConsumerHandler struct {
 	KafkaConsumerHandler
 }
 
-func (h *kafkaConsumerHandler) GetMessage(ctx context.Context, in *CallRequest, out *CallResponse) error {
-	return h.KafkaConsumerHandler.GetMessage(ctx, in, out)
-}
-
-func (h *kafkaConsumerHandler) PostMessage(ctx context.Context, in *PostRequest, out *CallResponse) error {
-	return h.KafkaConsumerHandler.PostMessage(ctx, in, out)
+func (h *kafkaConsumerHandler) Call(ctx context.Context, in *CallRequest, out *CallResponse) error {
+	return h.KafkaConsumerHandler.Call(ctx, in, out)
 }

@@ -1,5 +1,13 @@
 version: "3.7"
 services:
+  api-gateway:
+    image: fkynjyq/bit-danmaku_api-gateway
+    ports:
+      - 8008:8080
+
+  danmaku-cache:
+    image: fkynjyq/bit-danmaku_danmaku-cache
+
   mariadb:
     image: mariadb
     restart: always
