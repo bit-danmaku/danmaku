@@ -5,8 +5,7 @@ package kafkaconsumer;
 option go_package = "./;kafkaconsumer";
 
 service KafkaConsumer {
-	rpc GetMessage(CallRequest) returns (CallResponse) {}
-        rpc PostMessage(PostRequest) returns (CallResponse) {}
+	rpc Call(CallRequest) returns (CallResponse) {}
 }
 
 message CallRequest {
@@ -17,8 +16,3 @@ message CallRequest {
 message CallResponse {
 	string msg = 1;
 }
-
-message PostRequest{
-  
-}
-
