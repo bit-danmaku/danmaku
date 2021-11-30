@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package common;
+
+option go_package = "github.com/bit-danmaku/danmaku/proto/common";
+
+message Danmaku {
+  string Author = 1;
+  double Time = 2;
+  string Text = 3;
+  uint32 Color = 4;
+  uint32 Type = 5;
+}
