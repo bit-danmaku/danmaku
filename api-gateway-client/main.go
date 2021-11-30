@@ -11,6 +11,7 @@ import (
 	log "github.com/asim/go-micro/v3/logger"
 	"github.com/asim/go-micro/v3/registry"
 	"github.com/asim/go-micro/v3/server"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,8 +27,7 @@ func main() {
 	)
 
 	gin.SetMode(gin.ReleaseMode)
-	router := gin.New()
-	router.Use(gin.Recovery())
+	router := gin.Default()
 
 	// register router
 	demo := newDemo()
@@ -83,8 +83,11 @@ func newDemo() *demoRouter {
 }
 
 func (a *demoRouter) InitRouter(router *gin.Engine) {
-	router.POST("/channel/:id", a.PostDanmaku)
-	router.GET("/channel/:id", a.GetDanmakuList)
+	router.Use(cors.Default())
+	router.Use(gin.Recovery())
+
+	router.POST("/channel/:id/v3/", a.PostDanmaku)
+	router.GET("/channel/:id/v3/", a.GetDanmakuList)
 }
 
 func (a *demoRouter) PostDanmaku(c *gin.Context) {
