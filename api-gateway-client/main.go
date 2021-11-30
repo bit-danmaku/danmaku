@@ -14,6 +14,7 @@ import (
 	"github.com/asim/go-micro/v3/server"
 	"github.com/bit-danmaku/danmaku/common"
 	commonProto "github.com/bit-danmaku/danmaku/proto/common"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,8 +29,7 @@ func main() {
 	)
 
 	gin.SetMode(gin.ReleaseMode)
-	router := gin.New()
-	router.Use(gin.Recovery())
+	router := gin.Default()
 
 	// register router
 	hd := httpSrv.NewHandler(router)
@@ -79,8 +79,11 @@ func newDemo(client client.Client) *demoRouter {
 }
 
 func (a *demoRouter) InitRouter(router *gin.Engine) {
-	router.POST("/channel/:id", a.PostDanmaku)
-	router.GET("/channel/:id", a.GetDanmakuList)
+	router.Use(cors.Default())
+	router.Use(gin.Recovery())
+
+	router.POST("/channel/:id/v3/", a.PostDanmaku)
+	router.GET("/channel/:id/v3/", a.GetDanmakuList)
 }
 
 func (a *demoRouter) PostDanmaku(c *gin.Context) {
