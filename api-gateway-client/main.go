@@ -63,7 +63,7 @@ type demoRouter struct {
 
 type danmaku struct {
 	Author string  `json:"author" binding:"required"`
-	Time   float64 `json:"time" binding:"required"`
+	Time   float64 `json:"time"`
 	Text   string  `json:"text" binding:"required"`
 	Color  uint32  `json:"color"`
 	Type   uint8   `json:"type"`
