@@ -5,7 +5,7 @@ import (
 
 	log "github.com/asim/go-micro/v3/logger"
 
-	"github.com/bit-danmaku/danmaku/danmaku-cache/model"
+	"github.com/bit-danmaku/danmaku/common/model"
 	"github.com/bit-danmaku/danmaku/proto/common"
 	pb "github.com/bit-danmaku/danmaku/proto/danmakucache"
 )
