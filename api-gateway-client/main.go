@@ -131,7 +131,7 @@ func (a *demoRouter) GetDanmakuList(c *gin.Context) {
 	}
 
 	for _, v := range ret.DanmakuList{
-		danmankuList =append(danmankuList,danmakuResp{v.Time,v.Type,v.Color,v.Author,v.Author})
+		danmankuList =append(danmankuList,danmakuResp{v.Time,v.Type,v.Color,v.Author,v.Text})
 	}
 
 	c.JSON(200, gin.H{"data": danmankuList, "code": 0})
