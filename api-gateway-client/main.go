@@ -123,10 +123,16 @@ func (a *demoRouter) GetDanmakuList(c *gin.Context) {
 
 	ret, err := a.danmakuCachePB.GetDanmakuListByChannel(context.Background(), &danmaku_cache_pb.GetRequest{ChannelID: channelID})
 
+	danmankuList := make([]danmakuResp,0)
+
 	if err != nil {
-		c.JSON(501, gin.H{"code": 2, "msg": "Failed When Get Post Data."})
+		c.JSON(501, gin.H{"data":danmankuList,"code": 2, "msg": "Failed When Get Post Data."})
 		return
 	}
 
-	c.JSON(200, gin.H{"data": ret.DanmakuList, "code": 0})
+	for _, v := range ret.DanmakuList{
+		danmankuList =append(danmankuList,danmakuResp{v.Time,v.Type,v.Color,v.Author,v.Author})
+	}
+
+	c.JSON(200, gin.H{"data": danmankuList, "code": 0})
 }
