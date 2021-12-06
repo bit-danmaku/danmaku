@@ -22,7 +22,8 @@ func main() {
 	srv.Init()
 
 	// Register handler
-	pb.RegisterKafkaProducerHandler(srv.Server(), new(handler.KafkaProducer))
+	hdlStruct := handler.InitKafkaProducer()
+	pb.RegisterKafkaProducerHandler(srv.Server(), &hdlStruct)
 
 	// Run service
 	if err := srv.Run(); err != nil {
