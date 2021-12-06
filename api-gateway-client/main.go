@@ -14,6 +14,7 @@ import (
 	"github.com/asim/go-micro/v3/server"
 	"github.com/bit-danmaku/danmaku/common"
 	commonProto "github.com/bit-danmaku/danmaku/proto/common"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,8 +29,7 @@ func main() {
 	)
 
 	gin.SetMode(gin.ReleaseMode)
-	router := gin.New()
-	router.Use(gin.Recovery())
+	router := gin.Default()
 
 	// register router
 	hd := httpSrv.NewHandler(router)
@@ -63,7 +63,7 @@ type demoRouter struct {
 
 type danmaku struct {
 	Author string  `json:"author" binding:"required"`
-	Time   float64 `json:"time" binding:"required"`
+	Time   float64 `json:"time"`
 	Text   string  `json:"text" binding:"required"`
 	Color  uint32  `json:"color"`
 	Type   uint8   `json:"type"`
@@ -79,8 +79,11 @@ func newDemo(client client.Client) *demoRouter {
 }
 
 func (a *demoRouter) InitRouter(router *gin.Engine) {
-	router.POST("/channel/:id", a.PostDanmaku)
-	router.GET("/channel/:id", a.GetDanmakuList)
+	router.Use(cors.Default())
+	router.Use(gin.Recovery())
+
+	router.POST("/channel/:id/v3/", a.PostDanmaku)
+	router.GET("/channel/:id/v3/", a.GetDanmakuList)
 }
 
 func (a *demoRouter) PostDanmaku(c *gin.Context) {
@@ -120,10 +123,16 @@ func (a *demoRouter) GetDanmakuList(c *gin.Context) {
 
 	ret, err := a.danmakuCachePB.GetDanmakuListByChannel(context.Background(), &danmaku_cache_pb.GetRequest{ChannelID: channelID})
 
+	danmankuList := make([]danmakuResp,0)
+
 	if err != nil {
-		c.JSON(501, gin.H{"code": 2, "msg": "Failed When Get Post Data."})
+		c.JSON(501, gin.H{"data":danmankuList,"code": 2, "msg": "Failed When Get Post Data."})
 		return
 	}
 
-	c.JSON(200, gin.H{"data": ret.DanmakuList, "code": 0})
+	for _, v := range ret.DanmakuList{
+		danmankuList =append(danmankuList,danmakuResp{v.Time,v.Type,v.Color,v.Author,v.Text})
+	}
+
+	c.JSON(200, gin.H{"data": danmankuList, "code": 0})
 }
