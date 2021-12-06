@@ -7,6 +7,12 @@ services:
 
   danmaku-cache:
     image: fkynjyq/bit-danmaku_danmaku-cache
+  
+  kafka-producer:
+    image: fkynjyq/bit-danmaku_kafka-producer
+    environment:
+      - MICRO_BROKER=kafka
+      - MICRO_BROKER_ADDRESS=kafka:9092
 
   mariadb:
     image: mariadb
@@ -43,6 +49,16 @@ services:
       - REDIS_HOSTS=local:redis:6379
     ports:
       - 7998:8081
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+  
+  kafka:
+    image: wurstmeister/kafka:latest
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_HOST_NAME=127.0.0.1
+      - KAFKA_ADVERTISED_PORT=9092
 
 volumes:
   mariadb-data:
