@@ -4,7 +4,6 @@ import (
 	"github.com/bit-danmaku/danmaku/kafka-consumer/handler"
 	pb "github.com/bit-danmaku/danmaku/proto/kafkaconsumer"
 
-	"fmt"
 	"github.com/asim/go-micro/v3"
 	log "github.com/asim/go-micro/v3/logger"
 )
@@ -29,5 +28,5 @@ func main() {
 	if err := srv.Run(); err != nil {
 		log.Fatal(err)
 	}
-	fmt.print()
+
 }
