@@ -25,7 +25,7 @@ type KafkaConsumer struct{
 	dbConnector *model.DBConnector
 }
 
-func (e *KafkaConsumer) Call(ctx context.Context, req *pb.CallRequest, rsp *pb.CallResponse) error {
+func (kc *KafkaConsumer) Call(ctx context.Context, req *pb.CallRequest, rsp *pb.CallResponse) error {
 	log.Infof("Received KafkaConsumer.Call request: %v", req)
 	rsp.Msg = "Hello " + req.Name
 	return nil
