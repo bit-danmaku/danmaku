@@ -39,6 +39,7 @@ func InitKafkaProducer() KafkaProducer {
 
 func (kp *KafkaProducer) PostKafka(ctx context.Context, req *pb.PostRequest, rsp *pb.PostResponse) error {
 
+	//log.Infof("Received KafkaProducer.PostRequest request: %+v", req)
 	danmaku := req.Danmaku
 	json_danmaku, _ := json.Marshal(danmaku)
 
