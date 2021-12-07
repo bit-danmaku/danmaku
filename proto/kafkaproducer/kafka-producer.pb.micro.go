@@ -5,6 +5,7 @@ package kafkaproducer
 
 import (
 	fmt "fmt"
+	_ "github.com/bit-danmaku/danmaku/proto/common"
 	proto "google.golang.org/protobuf/proto"
 	math "math"
 )
@@ -36,10 +37,7 @@ func NewKafkaProducerEndpoints() []*api.Endpoint {
 // Client API for KafkaProducer service
 
 type KafkaProducerService interface {
-	Call(ctx context.Context, in *CallRequest, opts ...client.CallOption) (*CallResponse, error)
-	ClientStream(ctx context.Context, opts ...client.CallOption) (KafkaProducer_ClientStreamService, error)
-	ServerStream(ctx context.Context, in *ServerStreamRequest, opts ...client.CallOption) (KafkaProducer_ServerStreamService, error)
-	BidiStream(ctx context.Context, opts ...client.CallOption) (KafkaProducer_BidiStreamService, error)
+	PostKafka(ctx context.Context, in *PostRequest, opts ...client.CallOption) (*PostResponse, error)
 }
 
 type kafkaProducerService struct {
@@ -54,9 +52,9 @@ func NewKafkaProducerService(name string, c client.Client) KafkaProducerService 
 	}
 }
 
-func (c *kafkaProducerService) Call(ctx context.Context, in *CallRequest, opts ...client.CallOption) (*CallResponse, error) {
-	req := c.c.NewRequest(c.name, "KafkaProducer.Call", in)
-	out := new(CallResponse)
+func (c *kafkaProducerService) PostKafka(ctx context.Context, in *PostRequest, opts ...client.CallOption) (*PostResponse, error) {
+	req := c.c.NewRequest(c.name, "KafkaProducer.PostKafka", in)
+	out := new(PostResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -64,162 +62,15 @@ func (c *kafkaProducerService) Call(ctx context.Context, in *CallRequest, opts .
 	return out, nil
 }
 
-func (c *kafkaProducerService) ClientStream(ctx context.Context, opts ...client.CallOption) (KafkaProducer_ClientStreamService, error) {
-	req := c.c.NewRequest(c.name, "KafkaProducer.ClientStream", &ClientStreamRequest{})
-	stream, err := c.c.Stream(ctx, req, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &kafkaProducerServiceClientStream{stream}, nil
-}
-
-type KafkaProducer_ClientStreamService interface {
-	Context() context.Context
-	SendMsg(interface{}) error
-	RecvMsg(interface{}) error
-	Close() error
-	Send(*ClientStreamRequest) error
-}
-
-type kafkaProducerServiceClientStream struct {
-	stream client.Stream
-}
-
-func (x *kafkaProducerServiceClientStream) Close() error {
-	return x.stream.Close()
-}
-
-func (x *kafkaProducerServiceClientStream) Context() context.Context {
-	return x.stream.Context()
-}
-
-func (x *kafkaProducerServiceClientStream) SendMsg(m interface{}) error {
-	return x.stream.Send(m)
-}
-
-func (x *kafkaProducerServiceClientStream) RecvMsg(m interface{}) error {
-	return x.stream.Recv(m)
-}
-
-func (x *kafkaProducerServiceClientStream) Send(m *ClientStreamRequest) error {
-	return x.stream.Send(m)
-}
-
-func (c *kafkaProducerService) ServerStream(ctx context.Context, in *ServerStreamRequest, opts ...client.CallOption) (KafkaProducer_ServerStreamService, error) {
-	req := c.c.NewRequest(c.name, "KafkaProducer.ServerStream", &ServerStreamRequest{})
-	stream, err := c.c.Stream(ctx, req, opts...)
-	if err != nil {
-		return nil, err
-	}
-	if err := stream.Send(in); err != nil {
-		return nil, err
-	}
-	return &kafkaProducerServiceServerStream{stream}, nil
-}
-
-type KafkaProducer_ServerStreamService interface {
-	Context() context.Context
-	SendMsg(interface{}) error
-	RecvMsg(interface{}) error
-	Close() error
-	Recv() (*ServerStreamResponse, error)
-}
-
-type kafkaProducerServiceServerStream struct {
-	stream client.Stream
-}
-
-func (x *kafkaProducerServiceServerStream) Close() error {
-	return x.stream.Close()
-}
-
-func (x *kafkaProducerServiceServerStream) Context() context.Context {
-	return x.stream.Context()
-}
-
-func (x *kafkaProducerServiceServerStream) SendMsg(m interface{}) error {
-	return x.stream.Send(m)
-}
-
-func (x *kafkaProducerServiceServerStream) RecvMsg(m interface{}) error {
-	return x.stream.Recv(m)
-}
-
-func (x *kafkaProducerServiceServerStream) Recv() (*ServerStreamResponse, error) {
-	m := new(ServerStreamResponse)
-	err := x.stream.Recv(m)
-	if err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *kafkaProducerService) BidiStream(ctx context.Context, opts ...client.CallOption) (KafkaProducer_BidiStreamService, error) {
-	req := c.c.NewRequest(c.name, "KafkaProducer.BidiStream", &BidiStreamRequest{})
-	stream, err := c.c.Stream(ctx, req, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &kafkaProducerServiceBidiStream{stream}, nil
-}
-
-type KafkaProducer_BidiStreamService interface {
-	Context() context.Context
-	SendMsg(interface{}) error
-	RecvMsg(interface{}) error
-	Close() error
-	Send(*BidiStreamRequest) error
-	Recv() (*BidiStreamResponse, error)
-}
-
-type kafkaProducerServiceBidiStream struct {
-	stream client.Stream
-}
-
-func (x *kafkaProducerServiceBidiStream) Close() error {
-	return x.stream.Close()
-}
-
-func (x *kafkaProducerServiceBidiStream) Context() context.Context {
-	return x.stream.Context()
-}
-
-func (x *kafkaProducerServiceBidiStream) SendMsg(m interface{}) error {
-	return x.stream.Send(m)
-}
-
-func (x *kafkaProducerServiceBidiStream) RecvMsg(m interface{}) error {
-	return x.stream.Recv(m)
-}
-
-func (x *kafkaProducerServiceBidiStream) Send(m *BidiStreamRequest) error {
-	return x.stream.Send(m)
-}
-
-func (x *kafkaProducerServiceBidiStream) Recv() (*BidiStreamResponse, error) {
-	m := new(BidiStreamResponse)
-	err := x.stream.Recv(m)
-	if err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 // Server API for KafkaProducer service
 
 type KafkaProducerHandler interface {
-	Call(context.Context, *CallRequest, *CallResponse) error
-	ClientStream(context.Context, KafkaProducer_ClientStreamStream) error
-	ServerStream(context.Context, *ServerStreamRequest, KafkaProducer_ServerStreamStream) error
-	BidiStream(context.Context, KafkaProducer_BidiStreamStream) error
+	PostKafka(context.Context, *PostRequest, *PostResponse) error
 }
 
 func RegisterKafkaProducerHandler(s server.Server, hdlr KafkaProducerHandler, opts ...server.HandlerOption) error {
 	type kafkaProducer interface {
-		Call(ctx context.Context, in *CallRequest, out *CallResponse) error
-		ClientStream(ctx context.Context, stream server.Stream) error
-		ServerStream(ctx context.Context, stream server.Stream) error
-		BidiStream(ctx context.Context, stream server.Stream) error
+		PostKafka(ctx context.Context, in *PostRequest, out *PostResponse) error
 	}
 	type KafkaProducer struct {
 		kafkaProducer
@@ -232,131 +83,6 @@ type kafkaProducerHandler struct {
 	KafkaProducerHandler
 }
 
-func (h *kafkaProducerHandler) Call(ctx context.Context, in *CallRequest, out *CallResponse) error {
-	return h.KafkaProducerHandler.Call(ctx, in, out)
-}
-
-func (h *kafkaProducerHandler) ClientStream(ctx context.Context, stream server.Stream) error {
-	return h.KafkaProducerHandler.ClientStream(ctx, &kafkaProducerClientStreamStream{stream})
-}
-
-type KafkaProducer_ClientStreamStream interface {
-	Context() context.Context
-	SendMsg(interface{}) error
-	RecvMsg(interface{}) error
-	Close() error
-	Recv() (*ClientStreamRequest, error)
-}
-
-type kafkaProducerClientStreamStream struct {
-	stream server.Stream
-}
-
-func (x *kafkaProducerClientStreamStream) Close() error {
-	return x.stream.Close()
-}
-
-func (x *kafkaProducerClientStreamStream) Context() context.Context {
-	return x.stream.Context()
-}
-
-func (x *kafkaProducerClientStreamStream) SendMsg(m interface{}) error {
-	return x.stream.Send(m)
-}
-
-func (x *kafkaProducerClientStreamStream) RecvMsg(m interface{}) error {
-	return x.stream.Recv(m)
-}
-
-func (x *kafkaProducerClientStreamStream) Recv() (*ClientStreamRequest, error) {
-	m := new(ClientStreamRequest)
-	if err := x.stream.Recv(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (h *kafkaProducerHandler) ServerStream(ctx context.Context, stream server.Stream) error {
-	m := new(ServerStreamRequest)
-	if err := stream.Recv(m); err != nil {
-		return err
-	}
-	return h.KafkaProducerHandler.ServerStream(ctx, m, &kafkaProducerServerStreamStream{stream})
-}
-
-type KafkaProducer_ServerStreamStream interface {
-	Context() context.Context
-	SendMsg(interface{}) error
-	RecvMsg(interface{}) error
-	Close() error
-	Send(*ServerStreamResponse) error
-}
-
-type kafkaProducerServerStreamStream struct {
-	stream server.Stream
-}
-
-func (x *kafkaProducerServerStreamStream) Close() error {
-	return x.stream.Close()
-}
-
-func (x *kafkaProducerServerStreamStream) Context() context.Context {
-	return x.stream.Context()
-}
-
-func (x *kafkaProducerServerStreamStream) SendMsg(m interface{}) error {
-	return x.stream.Send(m)
-}
-
-func (x *kafkaProducerServerStreamStream) RecvMsg(m interface{}) error {
-	return x.stream.Recv(m)
-}
-
-func (x *kafkaProducerServerStreamStream) Send(m *ServerStreamResponse) error {
-	return x.stream.Send(m)
-}
-
-func (h *kafkaProducerHandler) BidiStream(ctx context.Context, stream server.Stream) error {
-	return h.KafkaProducerHandler.BidiStream(ctx, &kafkaProducerBidiStreamStream{stream})
-}
-
-type KafkaProducer_BidiStreamStream interface {
-	Context() context.Context
-	SendMsg(interface{}) error
-	RecvMsg(interface{}) error
-	Close() error
-	Send(*BidiStreamResponse) error
-	Recv() (*BidiStreamRequest, error)
-}
-
-type kafkaProducerBidiStreamStream struct {
-	stream server.Stream
-}
-
-func (x *kafkaProducerBidiStreamStream) Close() error {
-	return x.stream.Close()
-}
-
-func (x *kafkaProducerBidiStreamStream) Context() context.Context {
-	return x.stream.Context()
-}
-
-func (x *kafkaProducerBidiStreamStream) SendMsg(m interface{}) error {
-	return x.stream.Send(m)
-}
-
-func (x *kafkaProducerBidiStreamStream) RecvMsg(m interface{}) error {
-	return x.stream.Recv(m)
-}
-
-func (x *kafkaProducerBidiStreamStream) Send(m *BidiStreamResponse) error {
-	return x.stream.Send(m)
-}
-
-func (x *kafkaProducerBidiStreamStream) Recv() (*BidiStreamRequest, error) {
-	m := new(BidiStreamRequest)
-	if err := x.stream.Recv(m); err != nil {
-		return nil, err
-	}
-	return m, nil
+func (h *kafkaProducerHandler) PostKafka(ctx context.Context, in *PostRequest, out *PostResponse) error {
+	return h.KafkaProducerHandler.PostKafka(ctx, in, out)
 }

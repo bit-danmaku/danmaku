@@ -37,7 +37,6 @@ func NewDanmakuCacheEndpoints() []*api.Endpoint {
 // Client API for DanmakuCache service
 
 type DanmakuCacheService interface {
-	PostDanmaku(ctx context.Context, in *PostRequest, opts ...client.CallOption) (*PostResponse, error)
 	GetDanmakuListByChannel(ctx context.Context, in *GetRequest, opts ...client.CallOption) (*GetResponse, error)
 }
 
@@ -53,16 +52,6 @@ func NewDanmakuCacheService(name string, c client.Client) DanmakuCacheService {
 	}
 }
 
-func (c *danmakuCacheService) PostDanmaku(ctx context.Context, in *PostRequest, opts ...client.CallOption) (*PostResponse, error) {
-	req := c.c.NewRequest(c.name, "DanmakuCache.PostDanmaku", in)
-	out := new(PostResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *danmakuCacheService) GetDanmakuListByChannel(ctx context.Context, in *GetRequest, opts ...client.CallOption) (*GetResponse, error) {
 	req := c.c.NewRequest(c.name, "DanmakuCache.GetDanmakuListByChannel", in)
 	out := new(GetResponse)
@@ -76,13 +65,11 @@ func (c *danmakuCacheService) GetDanmakuListByChannel(ctx context.Context, in *G
 // Server API for DanmakuCache service
 
 type DanmakuCacheHandler interface {
-	PostDanmaku(context.Context, *PostRequest, *PostResponse) error
 	GetDanmakuListByChannel(context.Context, *GetRequest, *GetResponse) error
 }
 
 func RegisterDanmakuCacheHandler(s server.Server, hdlr DanmakuCacheHandler, opts ...server.HandlerOption) error {
 	type danmakuCache interface {
-		PostDanmaku(ctx context.Context, in *PostRequest, out *PostResponse) error
 		GetDanmakuListByChannel(ctx context.Context, in *GetRequest, out *GetResponse) error
 	}
 	type DanmakuCache struct {
@@ -94,10 +81,6 @@ func RegisterDanmakuCacheHandler(s server.Server, hdlr DanmakuCacheHandler, opts
 
 type danmakuCacheHandler struct {
 	DanmakuCacheHandler
-}
-
-func (h *danmakuCacheHandler) PostDanmaku(ctx context.Context, in *PostRequest, out *PostResponse) error {
-	return h.DanmakuCacheHandler.PostDanmaku(ctx, in, out)
 }
 
 func (h *danmakuCacheHandler) GetDanmakuListByChannel(ctx context.Context, in *GetRequest, out *GetResponse) error {

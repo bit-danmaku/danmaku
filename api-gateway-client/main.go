@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	danmaku_cache_pb "github.com/bit-danmaku/danmaku/proto/danmakucache"
+	kafka_producer "github.com/bit-danmaku/danmaku/proto/kafkaproducer"
 
 	httpServer "github.com/asim/go-micro/plugins/server/http/v3"
 	"github.com/asim/go-micro/v3"
@@ -59,6 +60,7 @@ func main() {
 //demoRouter
 type demoRouter struct {
 	danmakuCachePB danmaku_cache_pb.DanmakuCacheService
+	kafkaProducer kafka_producer.KafkaProducerService
 }
 
 type danmaku struct {
@@ -98,7 +100,7 @@ func (a *demoRouter) PostDanmaku(c *gin.Context) {
 		log.Infof("get body: %+v", dmk)
 
 		// TODO: change service call to kafkaproducer.
-		ret, err := a.danmakuCachePB.PostDanmaku(context.Background(), &danmaku_cache_pb.PostRequest{Danmaku: &commonProto.Danmaku{Author: dmk.Author, Time: dmk.Time, Text: dmk.Text, Color: dmk.Color, Type: uint32(dmk.Type)}, ChannelID: channelID})
+		ret, err := a.kafkaProducer.PostKafka(context.Background(),&kafka_producer.PostRequest{Danmaku: &commonProto.Danmaku{Author: dmk.Author, Time: dmk.Time, Text: dmk.Text, Color: dmk.Color, Type: uint32(dmk.Type)}, ChannelID: channelID})
 
 		if err != nil {
 			c.JSON(501, gin.H{"code": 2, "msg": "Failed When Add Data to DB."})
@@ -131,7 +133,7 @@ func (a *demoRouter) GetDanmakuList(c *gin.Context) {
 	}
 
 	for _, v := range ret.DanmakuList{
-		danmankuList =append(danmankuList,danmakuResp{v.Time,v.Type,v.Color,v.Author,v.Author})
+		danmankuList =append(danmankuList,danmakuResp{v.Time,v.Type,v.Color,v.Author,v.Text})
 	}
 
 	c.JSON(200, gin.H{"data": danmankuList, "code": 0})

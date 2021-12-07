@@ -4,41 +4,18 @@ package kafkaproducer;
 
 option go_package = "./;kafkaproducer";
 
+import "common/danmaku.proto";
+
 service KafkaProducer {
-	rpc Call(CallRequest) returns (CallResponse) {}
-	rpc ClientStream(stream ClientStreamRequest) returns (ClientStreamResponse) {}
-	rpc ServerStream(ServerStreamRequest) returns (stream ServerStreamResponse) {}
-	rpc BidiStream(stream BidiStreamRequest) returns (stream BidiStreamResponse) {}
+    rpc PostKafka(PostRequest) returns (PostResponse) {};
 }
 
-message CallRequest {
-	string name = 1;
+message PostRequest {
+        uint64 ChannelID = 1;
+        common.Danmaku Danmaku = 2;
 }
 
-message CallResponse {
-	string msg = 1;
-}
-
-message ClientStreamRequest {
-	int64 stroke = 1;
-}
-
-message ClientStreamResponse {
-	int64 count = 1;
-}
-
-message ServerStreamRequest {
-	int64 count = 1;
-}
-
-message ServerStreamResponse {
-	int64 count = 1;
-}
-
-message BidiStreamRequest {
-	int64 stroke = 1;
-}
-
-message BidiStreamResponse {
-	int64 stroke = 1;
+message PostResponse{
+        uint64 code = 1;
+        string msg = 2;
 }

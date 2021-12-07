@@ -2,64 +2,57 @@ package handler
 
 import (
 	"context"
-	"io"
-	"time"
+	"encoding/json"
 
 	log "github.com/asim/go-micro/v3/logger"
 
 	pb "github.com/bit-danmaku/danmaku/proto/kafkaproducer"
+
+	"fmt"
+
+	_ "github.com/asim/go-micro/plugins/broker/kafka/v3"
+	"github.com/asim/go-micro/v3/broker"
 )
 
-type KafkaProducer struct{}
+var (
+	service = "kafka-producer"
+	version = "latest"
+)
+var (
+	topic = "go.micro.topic.foo"
+)
 
-func (e *KafkaProducer) Call(ctx context.Context, req *pb.CallRequest, rsp *pb.CallResponse) error {
-	log.Infof("Received KafkaProducer.Call request: %v", req)
-	rsp.Msg = "Hello " + req.Name
-	return nil
+type KafkaProducer struct {
 }
 
-func (e *KafkaProducer) ClientStream(ctx context.Context, stream pb.KafkaProducer_ClientStreamStream) error {
-	var count int64
-	for {
-		req, err := stream.Recv()
-		if err == io.EOF {
-			log.Infof("Got %v pings total", count)
-			return stream.SendMsg(&pb.ClientStreamResponse{Count: count})
-		}
-		if err != nil {
-			return err
-		}
-		log.Infof("Got ping %v", req.Stroke)
-		count++
+func InitKafkaProducer() KafkaProducer {
+	if err := broker.Init(); err != nil {
+		log.Fatalf("Broker Init error: %v", err)
 	}
-}
 
-func (e *KafkaProducer) ServerStream(ctx context.Context, req *pb.ServerStreamRequest, stream pb.KafkaProducer_ServerStreamStream) error {
-	log.Infof("Received KafkaProducer.ServerStream request: %v", req)
-	for i := 0; i < int(req.Count); i++ {
-		log.Infof("Sending %d", i)
-		if err := stream.Send(&pb.ServerStreamResponse{
-			Count: int64(i),
-		}); err != nil {
-			return err
-		}
-		time.Sleep(time.Millisecond * 250)
+	if err := broker.Connect(); err != nil {
+		log.Fatalf("Broker Connect error: %v", err)
 	}
-	return nil
+	return KafkaProducer{}
+
 }
 
-func (e *KafkaProducer) BidiStream(ctx context.Context, stream pb.KafkaProducer_BidiStreamStream) error {
-	for {
-		req, err := stream.Recv()
-		if err == io.EOF {
-			return nil
-		}
-		if err != nil {
-			return err
-		}
-		log.Infof("Got ping %v", req.Stroke)
-		if err := stream.Send(&pb.BidiStreamResponse{Stroke: req.Stroke}); err != nil {
-			return err
-		}
+func (kp *KafkaProducer) PostKafka(ctx context.Context, req *pb.PostRequest, rsp *pb.PostResponse) error {
+
+	danmaku := req.Danmaku
+	json_danmaku, _ := json.Marshal(danmaku)
+
+	msg := &broker.Message{
+		Header: map[string]string{
+			"id": fmt.Sprintf("%d", req.ChannelID),
+		},
+		Body: []byte(fmt.Sprintf("%#v", json_danmaku)),
+	}
+	if err := broker.Publish(topic, msg); err != nil {
+		rsp.Code = 1
+		rsp.Msg = err.Error()
+		return err
+	} else {
+		return nil
 	}
 }
