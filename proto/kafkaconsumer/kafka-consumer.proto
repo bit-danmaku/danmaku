@@ -9,7 +9,7 @@ service KafkaConsumer {
 }
 
 message CallRequest {
-
+	string name = 1;
 }
 
 message CallResponse {

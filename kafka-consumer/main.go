@@ -22,8 +22,7 @@ func main() {
 	srv.Init()
 
 	// Register handler
-	hdlStruct := handler.InitKafkaConsumer()
-	pb.RegisterKafkaConsumerHandler(srv.Server(), &hdlStruct)
+	pb.RegisterKafkaConsumerHandler(srv.Server(), new(handler.KafkaConsumer))
 
 	// Run service
 	if err := srv.Run(); err != nil {
