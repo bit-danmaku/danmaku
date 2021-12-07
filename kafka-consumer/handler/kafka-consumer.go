@@ -11,14 +11,11 @@ import (
 	commonProto "github.com/bit-danmaku/danmaku/proto/common"
 	pb "github.com/bit-danmaku/danmaku/proto/kafkaconsumer"
 	"strconv"
+	common "github.com/bit-danmaku/danmaku/common"
 )
 
 var (
-	service = "kafka-consumer"
 	version = "latest"
-)
-var (
-	topic = "go.micro.topic.foo"
 )
 
 type KafkaConsumer struct{
@@ -32,7 +29,7 @@ func (kc *KafkaConsumer) Call(ctx context.Context, req *pb.CallRequest, rsp *pb.
 }
 
 func (kc *KafkaConsumer) sub() {
-	_, err := broker.Subscribe(topic, func(p broker.Event) error {
+	_, err := broker.Subscribe(common.TOPIC, func(p broker.Event) error {
 		//fmt.Println("[sub] received message:", string(p.Message().Body), "header", p.Message().Header)
 
 		danmaku:=commonProto.Danmaku{}

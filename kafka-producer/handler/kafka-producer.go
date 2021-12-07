@@ -7,6 +7,7 @@ import (
 	log "github.com/asim/go-micro/v3/logger"
 
 	pb "github.com/bit-danmaku/danmaku/proto/kafkaproducer"
+	common "github.com/bit-danmaku/danmaku/common"
 
 	"fmt"
 
@@ -15,7 +16,6 @@ import (
 )
 
 var (
-	service = "kafka-producer"
 	version = "latest"
 )
 var (
@@ -49,7 +49,7 @@ func (kp *KafkaProducer) PostKafka(ctx context.Context, req *pb.PostRequest, rsp
 		},
 		Body: []byte(fmt.Sprintf("%#v", json_danmaku)),
 	}
-	if err := broker.Publish(topic, msg); err != nil {
+	if err := broker.Publish(common.TOPIC, msg); err != nil {
 		rsp.Code = 1
 		rsp.Msg = err.Error()
 		return err
