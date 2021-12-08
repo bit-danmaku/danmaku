@@ -4,18 +4,15 @@ package kafkaconsumer;
 
 option go_package = "./;kafkaconsumer";
 
-import "common/danmaku.proto";
-
 service KafkaConsumer {
-	rpc PostDanmaku(PostRequest) returns (PostResponse) {};
+	rpc Call(CallRequest) returns (CallResponse) {}
 }
 
-message PostRequest {
-        uint64 ChannelID = 1;
-        common.Danmaku Danmaku = 2;
+message CallRequest {
+	string name = 1;
 }
 
-message PostResponse{
-        uint64 code = 1;
-        string msg = 2;
+message CallResponse {
+    uint64 code = 1;
+    string msg = 2;
 }

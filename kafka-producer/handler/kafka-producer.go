@@ -7,6 +7,7 @@ import (
 	log "github.com/asim/go-micro/v3/logger"
 
 	pb "github.com/bit-danmaku/danmaku/proto/kafkaproducer"
+	common "github.com/bit-danmaku/danmaku/common"
 
 	"fmt"
 
@@ -15,7 +16,6 @@ import (
 )
 
 var (
-	service = "kafka-producer"
 	version = "latest"
 )
 var (
@@ -39,6 +39,7 @@ func InitKafkaProducer() KafkaProducer {
 
 func (kp *KafkaProducer) PostKafka(ctx context.Context, req *pb.PostRequest, rsp *pb.PostResponse) error {
 
+	//log.Infof("Received KafkaProducer.PostRequest request: %+v", req)
 	danmaku := req.Danmaku
 	json_danmaku, _ := json.Marshal(danmaku)
 
@@ -48,7 +49,7 @@ func (kp *KafkaProducer) PostKafka(ctx context.Context, req *pb.PostRequest, rsp
 		},
 		Body: []byte(fmt.Sprintf("%#v", json_danmaku)),
 	}
-	if err := broker.Publish(topic, msg); err != nil {
+	if err := broker.Publish(common.TOPIC, msg); err != nil {
 		rsp.Code = 1
 		rsp.Msg = err.Error()
 		return err
