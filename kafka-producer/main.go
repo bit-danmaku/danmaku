@@ -14,6 +14,7 @@ var (
 )
 
 func main() {
+	hdlStruct := handler.InitKafkaProducer()
 	// Create service
 	srv := micro.NewService(
 		micro.Name(common.KAFKA_PRODUCER),
@@ -21,7 +22,6 @@ func main() {
 	)
 	srv.Init()
 	// Register handler
-	hdlStruct := handler.InitKafkaProducer()
 	pb.RegisterKafkaProducerHandler(srv.Server(), hdlStruct)
 
 	// Run service

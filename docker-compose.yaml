@@ -7,9 +7,27 @@ services:
 
   danmaku-cache:
     image: fkynjyq/bit-danmaku_danmaku-cache
+
+  test:
+    image: nginx
+    volumes:
+      - ./bin/:/app/
+    entrypoint:
+      - bash
+      - -c
+      - "sleep 10000"
+    environment:
+      - MICRO_BROKER=kafka
+      - MICRO_BROKER_ADDRESS=kafka:9092
+
   
   kafka-producer:
+    #build:
+      #context: .
+      #args:
+        #- BIN_NAME=kafka-producer
     image: fkynjyq/bit-danmaku_kafka-producer
+
     environment:
       - MICRO_BROKER=kafka
       - MICRO_BROKER_ADDRESS=kafka:9092
@@ -54,8 +72,9 @@ services:
     image: wurstmeister/zookeeper
   
   kafka:
-    image: wurstmeister/kafka:latest
+    image: hausgold/kafka:latest
     environment:
+      - MDNS_HOSTNAME=kafka.kafka.local
       - KAFKA_BROKER_ID=1
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_ADVERTISED_HOST_NAME=kafka

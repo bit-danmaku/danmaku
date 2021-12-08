@@ -13,6 +13,7 @@ import (
 
 	_ "github.com/asim/go-micro/plugins/broker/kafka/v3"
 	"github.com/asim/go-micro/v3/broker"
+	"github.com/asim/go-micro/v3/cmd"
 )
 
 var (
@@ -24,6 +25,7 @@ type KafkaProducer struct {
 }
 
 func InitKafkaProducer() *KafkaProducer {
+	cmd.Init()
 	//kafkaBroker := broker.NewBroker()
 	if err := broker.Init(); err != nil {
 		log.Fatalf("Broker Init error: %v", err)
@@ -38,7 +40,7 @@ func InitKafkaProducer() *KafkaProducer {
 }
 
 func (kp *KafkaProducer) PostKafka(ctx context.Context, req *pb.PostRequest, rsp *pb.PostResponse) error {
-	//log.Infof("Received KafkaProducer.PostRequest request: %+v", req)
+	log.Infof("Received KafkaProducer.PostRequest request: %+v", req)
 	danmaku := req.Danmaku
 	json_danmaku, _ := json.Marshal(danmaku)
 
@@ -49,12 +51,13 @@ func (kp *KafkaProducer) PostKafka(ctx context.Context, req *pb.PostRequest, rsp
 		Body: []byte(string(json_danmaku)),
 	}
 	if err := broker.Publish(common.TOPIC, msg); err != nil {
-		log.Error("Publish failed with: %+v, msg: %+v", err, msg)
+		log.Errorf("Publish failed with: %+v, msg: %+v", err, msg)
 		rsp.Code = 1
 		rsp.Msg = err.Error()
 
 		return nil
 	} else {
+		log.Infof("Publish success with msg: %+v", msg)
 		return nil
 	}
 }
