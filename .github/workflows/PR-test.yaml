@@ -1,9 +1,9 @@
-name: devops
+name: pull_request test build
 
 on:
-  push:
+  pull_request:
     branches:
-      - "main"
+      - main
 
 jobs:
   docker:
@@ -23,7 +23,7 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          push: true
+          push: false
           tags: fkynjyq/bit-danmaku_${{ matrix.bin }}:latest
           secrets: |
             GIT_AUTH_TOKEN=${{ secrets.MYTOKEN }}
