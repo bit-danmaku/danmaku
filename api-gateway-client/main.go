@@ -77,7 +77,7 @@ type danmakuResp = [5]interface{}
 func newDemo(client client.Client) *demoRouter {
 	return &demoRouter{
 		danmakuCachePB: danmaku_cache_pb.NewDanmakuCacheService(common.DANMAKU_CACHE, client),
-		kafkaProducer: kafka_producer_pb.NewKafkaProducerService(common.KAFKA_PRODUCER,client),
+		kafkaProducer: kafka_producer_pb.NewKafkaProducerService(common.KAFKA_PRODUCER, client),
 	}
 }
 
@@ -100,6 +100,7 @@ func (a *demoRouter) PostDanmaku(c *gin.Context) {
 	if err := c.ShouldBindJSON(&dmk); err == nil {
 		log.Infof("get body: %+v", dmk)
 
+		// TODO: change service call to kafkaproducer.
 		ret, err := a.kafkaProducer.PostKafka(context.Background(),&kafka_producer_pb.PostRequest{Danmaku: &commonProto.Danmaku{Author: dmk.Author, Time: dmk.Time, Text: dmk.Text, Color: dmk.Color, Type: uint32(dmk.Type)}, ChannelID: channelID})
 
 		if err != nil {

@@ -20,10 +20,9 @@ func main() {
 		micro.Version(version),
 	)
 	srv.Init()
-
 	// Register handler
 	hdlStruct := handler.InitKafkaProducer()
-	pb.RegisterKafkaProducerHandler(srv.Server(), &hdlStruct)
+	pb.RegisterKafkaProducerHandler(srv.Server(), hdlStruct)
 
 	// Run service
 	if err := srv.Run(); err != nil {
