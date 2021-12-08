@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/bit-danmaku/danmaku/kafka-producer/handler"
 	pb "github.com/bit-danmaku/danmaku/proto/kafkaproducer"
-
 	"github.com/asim/go-micro/v3"
 	log "github.com/asim/go-micro/v3/logger"
 )
@@ -20,10 +19,9 @@ func main() {
 		micro.Version(version),
 	)
 	srv.Init()
-
 	// Register handler
 	hdlStruct := handler.InitKafkaProducer()
-	pb.RegisterKafkaProducerHandler(srv.Server(), &hdlStruct)
+	pb.RegisterKafkaProducerHandler(srv.Server(), hdlStruct)
 
 	// Run service
 	if err := srv.Run(); err != nil {

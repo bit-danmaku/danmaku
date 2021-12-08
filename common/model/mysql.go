@@ -12,6 +12,7 @@ type MariaDBClient struct {
 
 func InitMariaDB() MariaDBClient {
 	dsn := "root:qwerty@tcp(db.danmaku.fkynjyq.com:3306)/olddanmaku?charset=utf8mb4&parseTime=True&loc=Local"
+	//dsn := "root:qwerty@tcp(localhost:3306)/danmaku?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
