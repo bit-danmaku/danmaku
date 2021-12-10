@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        bin: [api-gateway, danmaku-cache, kafka-producer]
+        bin: [api-gateway, danmaku-cache, kafka-producer, kafka-consumer]
     steps:
       - 
         name: Login to DockerHub

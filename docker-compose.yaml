@@ -32,6 +32,17 @@ services:
       - MICRO_BROKER=kafka
       - MICRO_BROKER_ADDRESS=kafka:9092
 
+  kafka-consumer:
+    #build:
+      #context: .
+      #args:
+        #- BIN_NAME=kafka-consumer
+    image: fkynjyq/bit-danmaku_kafka-consumer
+
+    environment:
+      - MICRO_BROKER=kafka
+      - MICRO_BROKER_ADDRESS=kafka:9092
+
   mariadb:
     image: mariadb
     restart: always
