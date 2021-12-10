@@ -4,36 +4,39 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	kafka "github.com/asim/go-micro/plugins/broker/kafka/v3"
+	"strconv"
+
+	_ "github.com/asim/go-micro/plugins/broker/kafka/v3"
 	"github.com/asim/go-micro/v3/broker"
+	"github.com/asim/go-micro/v3/cmd"
 	log "github.com/asim/go-micro/v3/logger"
+	common "github.com/bit-danmaku/danmaku/common"
 	"github.com/bit-danmaku/danmaku/common/model"
 	commonProto "github.com/bit-danmaku/danmaku/proto/common"
 	pb "github.com/bit-danmaku/danmaku/proto/kafkaconsumer"
-	"strconv"
-	common "github.com/bit-danmaku/danmaku/common"
 )
 
 var (
 	version = "latest"
 )
 
-type KafkaConsumer struct{
+type KafkaConsumer struct {
 	dbConnector *model.DBConnector
-	kafkaBroker broker.Broker
+	//kafkaBroker broker.Broker
 }
 
 func InitKafkaConsumer() *KafkaConsumer {
-	kafkaBroker := kafka.NewBroker()
-	if err := kafkaBroker.Init(); err != nil {
+	cmd.Init()
+	//kafkaBroker := kafka.NewBroker()
+	if err := broker.Init(); err != nil {
 		log.Fatalf("Broker Init error: %v", err)
 	}
 
-	if err := kafkaBroker.Connect(); err != nil {
+	if err := broker.Connect(); err != nil {
 		log.Fatalf("Broker Connect error: %v", err)
 	}
 
-	return &KafkaConsumer{dbConnector: model.InitDB(), kafkaBroker: kafkaBroker}
+	return &KafkaConsumer{dbConnector: model.InitDB() /*kafkaBroker: kafkaBroker*/}
 }
 
 func (kc *KafkaConsumer) Call(ctx context.Context, req *pb.CallRequest, rsp *pb.CallResponse) error {
@@ -43,12 +46,12 @@ func (kc *KafkaConsumer) Call(ctx context.Context, req *pb.CallRequest, rsp *pb.
 }
 
 func (kc *KafkaConsumer) Sub() {
-	_, err := kc.kafkaBroker.Subscribe(common.TOPIC, func(p broker.Event) error {
+	_, err := broker.Subscribe(common.TOPIC, func(p broker.Event) error {
 		fmt.Println("收到订阅")
 		fmt.Println("[sub] received message:", string(p.Message().Body), "header", p.Message().Header)
 
-		danmaku:=commonProto.Danmaku{}
-		if err_json:=json.Unmarshal(p.Message().Body, &danmaku);err_json!=nil{
+		danmaku := commonProto.Danmaku{}
+		if err_json := json.Unmarshal(p.Message().Body, &danmaku); err_json != nil {
 			fmt.Println(err_json)
 			return err_json
 		}
@@ -60,7 +63,6 @@ func (kc *KafkaConsumer) Sub() {
 
 		fmt.Println("解析完成")
 
-		
 		err_addDanmaku := kc.dbConnector.AddDanmaku(context.Background(), model.Danmaku{
 			ChannelID: channelID,
 			Author:    danmaku.Author,
@@ -69,7 +71,7 @@ func (kc *KafkaConsumer) Sub() {
 			Color:     danmaku.Color,
 			Type:      uint8(danmaku.Type),
 		})
-		if err_addDanmaku != nil{
+		if err_addDanmaku != nil {
 			fmt.Println("err_addDanmaku")
 			return err_addDanmaku
 		}
@@ -80,4 +82,3 @@ func (kc *KafkaConsumer) Sub() {
 		fmt.Println(err)
 	}
 }
-
