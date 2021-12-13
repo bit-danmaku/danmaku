@@ -1,5 +1,10 @@
 version: "3.7"
 services:
+  frontend:
+    image: fkynjhq/bit-danmaku_frontend
+    ports:
+      - 8080:80
+
   api-gateway:
     image: fkynjyq/bit-danmaku_api-gateway
     ports:
@@ -8,17 +13,17 @@ services:
   danmaku-cache:
     image: fkynjyq/bit-danmaku_danmaku-cache
 
-  test:
-    image: nginx
-    volumes:
-      - ./bin/:/app/
-    entrypoint:
-      - bash
-      - -c
-      - "sleep 10000"
-    environment:
-      - MICRO_BROKER=kafka
-      - MICRO_BROKER_ADDRESS=kafka:9092
+  #test:
+    #image: nginx
+    #volumes:
+      #- ./bin/:/app/
+    #entrypoint:
+      #- bash
+      #- -c
+      #- "sleep 10000"
+    #environment:
+      #- MICRO_BROKER=kafka
+      #- MICRO_BROKER_ADDRESS=kafka:9092
 
   
   kafka-producer:
