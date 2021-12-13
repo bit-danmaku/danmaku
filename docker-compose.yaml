@@ -7,11 +7,16 @@ services:
 
   api-gateway:
     image: fkynjyq/bit-danmaku_api-gateway
+    restart: always
     ports:
       - 8008:8080
 
   danmaku-cache:
     image: fkynjyq/bit-danmaku_danmaku-cache
+    depends_on:
+      - mariadb
+      - redis
+    restart: always
 
   #test:
     #image: nginx
@@ -32,6 +37,9 @@ services:
       #args:
         #- BIN_NAME=kafka-producer
     image: fkynjyq/bit-danmaku_kafka-producer
+    depends_on:
+      - kafka
+    restart: always
 
     environment:
       - MICRO_BROKER=kafka
@@ -43,7 +51,11 @@ services:
       #args:
         #- BIN_NAME=kafka-consumer
     image: fkynjyq/bit-danmaku_kafka-consumer
-
+    depends_on:
+      - mariadb
+      - redis
+      - kafka
+    restart: always
     environment:
       - MICRO_BROKER=kafka
       - MICRO_BROKER_ADDRESS=kafka:9092
@@ -74,8 +86,8 @@ services:
 
   redis:
     image: redis
-    ports:
-      - 6379:6379
+    #ports:
+      #- 6379:6379
 
   redis-commander:
     image: rediscommander/redis-commander
@@ -97,13 +109,8 @@ services:
       - KAFKA_ADVERTISED_PORT=9092
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
       - KAFKA_LISTENERS=PLAINTEXT://:9092
-    ports:
-      - 9092:9092
-
-  kafka-exporter:
-    image: danielqsj/kafka-exporter
-    ports:
-      - 9308:9308
+    #ports:
+      #- 9092:9092
 
 
 volumes:
