@@ -47,8 +47,8 @@ func (kc *KafkaConsumer) Call(ctx context.Context, req *pb.CallRequest, rsp *pb.
 
 func (kc *KafkaConsumer) Sub() {
 	_, err := broker.Subscribe(common.TOPIC, func(p broker.Event) error {
-		fmt.Println("收到订阅")
-		fmt.Println("[sub] received message:", string(p.Message().Body), "header", p.Message().Header)
+		log.Info("收到订阅")
+		log.Infof("[sub] received message:", string(p.Message().Body), "header", p.Message().Header)
 
 		danmaku := commonProto.Danmaku{}
 		if err_json := json.Unmarshal(p.Message().Body, &danmaku); err_json != nil {
@@ -61,7 +61,7 @@ func (kc *KafkaConsumer) Sub() {
 			return err_int
 		}
 
-		fmt.Println("解析完成")
+		log.Info("解析完成")
 
 		err_addDanmaku := kc.dbConnector.AddDanmaku(context.Background(), model.Danmaku{
 			ChannelID: channelID,
@@ -72,13 +72,13 @@ func (kc *KafkaConsumer) Sub() {
 			Type:      uint8(danmaku.Type),
 		})
 		if err_addDanmaku != nil {
-			fmt.Println("err_addDanmaku")
+			log.Error("err_addDanmaku")
 			return err_addDanmaku
 		}
 		return nil
 	})
 
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 	}
 }

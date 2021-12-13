@@ -14,6 +14,9 @@ var (
 )
 
 func main() {
+	hdlStruct := handler.InitKafkaConsumer()
+	hdlStruct.Sub()
+
 	//Create service
 	srv := micro.NewService(
 		micro.Name(common.KAFKA_CONSUMER),
@@ -21,15 +24,11 @@ func main() {
 	)
 	srv.Init()
 
-	hdlStruct := handler.InitKafkaConsumer()
 	//Register handler
 	pb.RegisterKafkaConsumerHandler(srv.Server(), hdlStruct)
-	
-	go hdlStruct.Sub()
 	
 	//Run service
 	if err := srv.Run(); err != nil {
 		log.Fatal(err)
 	}
-	//select {}
 }
