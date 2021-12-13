@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   frontend:
-    image: fkynjhq/bit-danmaku_frontend
+    image: fkynjyq/bit-danmaku_frontend
     ports:
       - 8080:80
 
