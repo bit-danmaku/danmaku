@@ -3,7 +3,7 @@ services:
   frontend:
     image: fkynjyq/bit-danmaku_frontend
     ports:
-      - 8080:80
+      - 8081:80
 
   api-gateway:
     image: fkynjyq/bit-danmaku_api-gateway
@@ -18,6 +18,7 @@ services:
       - redis
     restart: always
 
+  # For test use.
   #test:
     #image: nginx
     #volumes:
@@ -32,24 +33,18 @@ services:
 
   
   kafka-producer:
-    #build:
-      #context: .
-      #args:
-        #- BIN_NAME=kafka-producer
     image: fkynjyq/bit-danmaku_kafka-producer
     depends_on:
       - kafka
     restart: always
+    deploy:
+      replicas: 3
 
     environment:
       - MICRO_BROKER=kafka
       - MICRO_BROKER_ADDRESS=kafka:9092
 
   kafka-consumer:
-    #build:
-      #context: .
-      #args:
-        #- BIN_NAME=kafka-consumer
     image: fkynjyq/bit-danmaku_kafka-consumer
     depends_on:
       - mariadb
@@ -63,8 +58,8 @@ services:
   mariadb:
     image: mariadb
     restart: always
-    ports:
-      - 3306:3306
+    #ports:
+      #- 3306:3306
     volumes:
       - mariadb-data:/var/lib/mysql
     environment:
@@ -72,7 +67,6 @@ services:
     #command: "mysqld --init-file /data/application/init.sql"
     #volumes:
     #- ./init.sql:/data/application/init.sql
-    # hello
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
@@ -86,8 +80,6 @@ services:
 
   redis:
     image: redis
-    #ports:
-      #- 6379:6379
 
   redis-commander:
     image: rediscommander/redis-commander
