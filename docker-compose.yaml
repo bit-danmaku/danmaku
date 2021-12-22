@@ -5,6 +5,14 @@ services:
     ports:
       - 8081:80
 
+  old-danmaku:
+    image: fkynjyq/bit-danmaku_old-danmaku
+    ports:
+      - 8009:8080
+    depends_on:
+      - mariadb
+    restart: always
+
   api-gateway:
     image: fkynjyq/bit-danmaku_api-gateway
     restart: always
@@ -17,6 +25,8 @@ services:
       - mariadb
       - redis
     restart: always
+    deploy:
+      replicas: 3
 
   # For test use.
   #test:
@@ -92,7 +102,8 @@ services:
     image: wurstmeister/zookeeper
   
   kafka:
-    image: hausgold/kafka:latest
+    image: wurstmeister/kafka:latest
+    restart: always
     environment:
       - MDNS_HOSTNAME=kafka.kafka.local
       - KAFKA_BROKER_ID=1
