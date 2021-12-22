@@ -129,6 +129,7 @@ func (a *demoRouter) GetDanmakuList(c *gin.Context) {
 	danmankuList := make([]danmakuResp, len(ret.DanmakuList))
 
 	if err != nil {
+		log.Error(err)
 		c.JSON(501, gin.H{"data": danmankuList, "code": 2, "msg": "Failed When Get Data."})
 		return
 	}
