@@ -39,15 +39,18 @@ danmaku-cache:
 tidy:
 	@go mod tidy
 
-# TODO
 .PHONY: docker
 docker:
 	docker build -t 'fkynjyq/bit-danmaku_api-gateway' --build-arg BIN_NAME=api-gateway .
+	docker build -t 'fkynjyq/bit-danmaku_kafka-producer' --build-arg BIN_NAME=kafka-producer .
+	docker build -t 'fkynjyq/bit-danmaku_kafka-consumer' --build-arg BIN_NAME=kafka-consumer .
 	docker build -t 'fkynjyq/bit-danmaku_danmaku-cache' --build-arg BIN_NAME=danmaku-cache . 
 
 .PHONY: docker-push
 docker-push: docker
 	docker push fkynjyq/bit-danmaku_api-gateway
+	docker push fkynjyq/bit-danmaku_kafka-producer
+	docker push fkynjyq/bit-danmaku_kafka-consumer
 	docker push fkynjyq/bit-danmaku_danmaku-cache
 	
 #.PHONY: test
