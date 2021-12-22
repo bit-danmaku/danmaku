@@ -33,6 +33,7 @@ func (db *DBConnector) GetDanmakuListByChannel(ctx context.Context, channelID ui
 	dmks, err := db.cache.GetDanmakuByChannel(ctx, channelID)
 	if err != nil {
 		// Or read from mysql.
+		log.Info("Failed to hit Cache")
 
 		dmks = db.db.GetDanmakuListByChannel(channelID)
 
@@ -41,6 +42,8 @@ func (db *DBConnector) GetDanmakuListByChannel(ctx context.Context, channelID ui
 		if err != nil {
 			log.Error("cache set error: %+v", err)
 		}
+	} else {
+		log.Info("Hit Cache")
 	}
 
 	return dmks
