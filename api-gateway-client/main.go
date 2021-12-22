@@ -60,7 +60,7 @@ func main() {
 //demoRouter
 type demoRouter struct {
 	danmakuCachePB danmaku_cache_pb.DanmakuCacheService
-	kafkaProducer kafka_producer_pb.KafkaProducerService
+	kafkaProducer  kafka_producer_pb.KafkaProducerService
 }
 
 type danmaku struct {
@@ -77,7 +77,7 @@ type danmakuResp = [5]interface{}
 func newDemo(client client.Client) *demoRouter {
 	return &demoRouter{
 		danmakuCachePB: danmaku_cache_pb.NewDanmakuCacheService(common.DANMAKU_CACHE, client),
-		kafkaProducer: kafka_producer_pb.NewKafkaProducerService(common.KAFKA_PRODUCER, client),
+		kafkaProducer:  kafka_producer_pb.NewKafkaProducerService(common.KAFKA_PRODUCER, client),
 	}
 }
 
@@ -100,11 +100,11 @@ func (a *demoRouter) PostDanmaku(c *gin.Context) {
 	if err := c.ShouldBindJSON(&dmk); err == nil {
 		log.Infof("get body: %+v", dmk)
 
-		// TODO: change service call to kafkaproducer.
-		ret, err := a.kafkaProducer.PostKafka(context.Background(),&kafka_producer_pb.PostRequest{Danmaku: &commonProto.Danmaku{Author: dmk.Author, Time: dmk.Time, Text: dmk.Text, Color: dmk.Color, Type: uint32(dmk.Type)}, ChannelID: channelID})
+		ret, err := a.kafkaProducer.PostKafka(context.Background(), &kafka_producer_pb.PostRequest{Danmaku: &commonProto.Danmaku{Author: dmk.Author, Time: dmk.Time, Text: dmk.Text, Color: dmk.Color, Type: uint32(dmk.Type)}, ChannelID: channelID})
 
 		if err != nil {
 			c.JSON(501, gin.H{"code": 2, "msg": "Failed When Add Data to DB."})
+			return
 		}
 
 		c.JSON(200, gin.H{"code": ret.Code, "data": ret.Msg})
@@ -126,15 +126,15 @@ func (a *demoRouter) GetDanmakuList(c *gin.Context) {
 
 	ret, err := a.danmakuCachePB.GetDanmakuListByChannel(context.Background(), &danmaku_cache_pb.GetRequest{ChannelID: channelID})
 
-	danmankuList := make([]danmakuResp,0)
+	danmankuList := make([]danmakuResp, len(ret.DanmakuList))
 
 	if err != nil {
-		c.JSON(501, gin.H{"data":danmankuList,"code": 2, "msg": "Failed When Get Post Data."})
+		c.JSON(501, gin.H{"data": danmankuList, "code": 2, "msg": "Failed When Get Data."})
 		return
 	}
 
-	for _, v := range ret.DanmakuList{
-		danmankuList =append(danmankuList,danmakuResp{v.Time,v.Type,v.Color,v.Author,v.Text})
+	for i, v := range ret.DanmakuList {
+		danmankuList[i] = danmakuResp{v.Time, v.Type, v.Color, v.Author, v.Text}
 	}
 
 	c.JSON(200, gin.H{"data": danmankuList, "code": 0})

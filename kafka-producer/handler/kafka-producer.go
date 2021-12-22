@@ -57,7 +57,6 @@ func (kp *KafkaProducer) PostKafka(ctx context.Context, req *pb.PostRequest, rsp
 
 		return nil
 	} else {
-		log.Infof("Publish success with msg: %+v", msg)
 		return nil
 	}
 }

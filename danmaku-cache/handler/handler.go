@@ -23,16 +23,16 @@ func InitDanmakuCache() DanmakuCache {
 func (dc *DanmakuCache) GetDanmakuListByChannel(ctx context.Context, req *pb.GetRequest, rsp *pb.GetResponse) error {
 	log.Infof("Received DanmakuCache.GetDanmakuListByChannel request: %+v", req)
 	danmakuList := dc.dbConnector.GetDanmakuListByChannel(ctx, req.ChannelID)
+	rsp.DanmakuList = make([]*common.Danmaku, len(danmakuList))
 
-	for _, v := range danmakuList {
-		rsp.DanmakuList = append(rsp.DanmakuList, &common.Danmaku{
+	for i, v := range danmakuList {
+		rsp.DanmakuList[i] = &common.Danmaku{
 			Author: v.Author,
 			Time:   v.Time,
 			Text:   v.Text,
 			Color:  v.Color,
 			Type:   uint32(v.Type),
-		})
+		}
 	}
 	return nil
 }
-
