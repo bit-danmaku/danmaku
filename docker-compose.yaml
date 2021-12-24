@@ -74,9 +74,8 @@ services:
       - mariadb-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: qwerty
+      MARIADB_DATABASE: olddanmaku
     #command: "mysqld --init-file /data/application/init.sql"
-    #volumes:
-    #- ./init.sql:/data/application/init.sql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
